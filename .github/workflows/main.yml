@@ -18,7 +18,7 @@ jobs:
         run: mvn package
       - name: connect to LAB and deploy code on tomcat9
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
-         with:
+        with:
           host: '54.197.73.189'
           user: 'labuser'
           pass: 'Nuvelabs123$'
