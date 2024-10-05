@@ -25,15 +25,10 @@ jobs:
           port: ${{ secrets.PORT }}
           connect_timeout: 10s
           first_ssh: |
-             # Change permissions to allow writing to Tomcat's webapps directory
              sudo chmod 777 /var/lib/tomcat9/webapps
-             # Ensure the SSH user has ownership over the webapps directory
-             sudo chown -R $USER:$USER /var/lib/tomcat9/webapps
           scp: |
-             # Deploy the WAR file to the webapps directory
-             './target/*.war' => /var/lib/tomcat9/webapps
+             './target/*war' => /var/lib/tomcat9/webapps
           last_ssh: |
-             # Restart Tomcat to reflect the new deployment
              sudo systemctl restart tomcat9
       - name: Trigger Jenkins job via SSH
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
