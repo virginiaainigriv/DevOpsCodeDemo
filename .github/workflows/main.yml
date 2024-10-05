@@ -42,4 +42,4 @@ jobs:
           connect_timeout: 10s
           first_ssh: |
             # Trigger the Jenkins job for the integration build
-            sudo curl -l -u admin:${{secrets.JENKINS_TOKEN}} http://localhost:8000/job/github_action_integration/build?token=token1
+            sudo curl -l -u admin:${{secrets.JENKINS_TOKEN}} http://localhost:8080/job/github_action_integration/build?token=token1
