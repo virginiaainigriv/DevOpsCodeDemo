@@ -16,7 +16,7 @@ jobs:
           cache: 'maven'
       - name: Build the source code and generate .war file  
         run: mvn package
-      - name: connect to LAB and deploy code on tomcat9
+      - name: Connect to LAB and deploy code on tomcat9
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         with:
           host: ${{ secrets.HOST }}
@@ -25,12 +25,17 @@ jobs:
           port: ${{ secrets.PORT }}
           connect_timeout: 10s
           first_ssh: |
+             # Change permissions to allow writing to Tomcat's webapps directory
              sudo chmod 777 /var/lib/tomcat9/webapps
+             # Ensure the SSH user has ownership over the webapps directory
+             sudo chown -R $USER:$USER /var/lib/tomcat9/webapps
           scp: |
-             './target/*war' => /var/lib/tomcat9/webapps
+             # Deploy the WAR file to the webapps directory
+             './target/*.war' => /var/lib/tomcat9/webapps
           last_ssh: |
+             # Restart Tomcat to reflect the new deployment
              sudo systemctl restart tomcat9
-      - name: connect to LAB and deploy code on tomcat9
+      - name: Trigger Jenkins job via SSH
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         with:
           host: ${{ secrets.HOST }}
@@ -39,4 +44,5 @@ jobs:
           port: ${{ secrets.PORT }}
           connect_timeout: 10s
           first_ssh: |
+            # Trigger the Jenkins job for the integration build
             sudo curl -l -u admin:${{secrets.JENKINS_TOKEN}} http://localhost:8000/job/github_action_integration/build?token=token1
